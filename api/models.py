@@ -9,6 +9,15 @@ class Meal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def number_of_ratings(self):
+        return self.ratings.count()
+
+    def average_rating(self):
+        ratings = self.number_of_ratings()
+        if ratings > 0:
+            return sum(rating.stars for rating in self.ratings.all()) / ratings
+        return 0
+
     def __str__(self):
         return self.name
 
@@ -16,7 +25,7 @@ class Rating(models.Model):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='ratings')
     stars = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)]) 
-    comment = models.TextField(blank=True)
+    comment = models.TextField(blank=True) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
